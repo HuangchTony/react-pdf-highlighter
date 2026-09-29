@@ -22,10 +22,10 @@ export function Learning({
         disabled={generating}
         onClick={ai}
       >
-        {generating ? "正在整理原文…" : "生成 AI 学习任务单 ↗"}
+        {generating ? "正在整理原文…" : "生成研读任务单（交给 AI）↗"}
       </button>
       <p className="prompt-hint">
-        提取前 12 页并附学习问题；预览后可交给你选择的 AI。此处不会上传文献。
+        提取前 12 页，生成带页码证据、概念解释和自测问题的 Markdown 任务单；需要你复制给 ChatGPT、Claude 或其他 AI，本阅读器不会自动调用 AI，也不会上传文献。
       </p>
       <h3>01 / 先建立地图</h3>
       {isDemo ? (

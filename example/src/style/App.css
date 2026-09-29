@@ -755,3 +755,8 @@ blockquote {
   margin: 7px 0 15px;
   color: #8b9683;
 }
+
+.document-row { display: flex; align-items: stretch; gap: 4px; }
+.document-row .document-item { flex: 1; }
+.document-delete { border: 0; background: transparent; color: #9a6a6a; padding: 0 8px; cursor: pointer; font-size: 12px; }
+.document-delete:hover { color: #b42318; background: #fff4f2; }

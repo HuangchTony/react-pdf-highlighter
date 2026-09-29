@@ -11,9 +11,12 @@ import {
 import type { IHighlight } from "./react-pdf-highlighter";
 import { Learning } from "./Learning";
 import {
+  builtInDemos,
   demo,
   downloadFile,
+  isBuiltIn,
   loadDocuments,
+  removeDocument,
   markdown,
   saveDocument,
 } from "./storage";
@@ -28,7 +31,7 @@ const worker = new URL(
 ).href;
 
 export function App() {
-  const [documents, setDocuments] = useState<ReadingDocument[]>([demo]);
+  const [documents, setDocuments] = useState<ReadingDocument[]>(builtInDemos);
   const documentsRef = useRef(documents);
   const [activeId, setActiveId] = useState(demo.id);
   const [ready, setReady] = useState(false);
@@ -55,9 +58,8 @@ export function App() {
   useEffect(() => {
     loadDocuments()
       .then((saved) => {
-        const loaded = saved.some((d) => d.id === demo.id)
-          ? saved
-          : [demo, ...saved];
+        const savedById = new Map(saved.map((d) => [d.id, d]));
+        const loaded = [...builtInDemos.map((d) => savedById.get(d.id) || d), ...saved.filter((d) => !builtInDemos.some((b) => b.id === d.id))];
         documentsRef.current = loaded;
         setDocuments(loaded);
         setReady(true);
@@ -70,9 +72,8 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    const next = active.file
-      ? URL.createObjectURL(active.file)
-      : `${import.meta.env.BASE_URL}demo/seila-law.pdf`;
+    const builtInPdf: Record<string, string> = { "w1-seila-law": "seila-law.pdf", "w1-trump-wilcox": "S05-Wilcox.pdf", "w1-learning-resources-trump": "S06-Learning-Resources.pdf" };
+    const next = active.file ? URL.createObjectURL(active.file) : `${import.meta.env.BASE_URL}demo/${builtInPdf[active.id] || "seila-law.pdf"}`;
     setUrl(next);
     setPageCount(0);
     return () => {
@@ -242,25 +243,12 @@ export function App() {
         </div>
         <nav aria-label="文献列表">
           {documents.map((doc) => (
-            <button
-              type="button"
-              key={doc.id}
-              className={`document-item ${active.id === doc.id ? "selected" : ""}`}
-              onClick={() => {
-                setActiveId(doc.id);
-                setSearch("");
-                setFilter("全部");
-              }}
-            >
-              <span className="document-icon">▤</span>
-              <span>
-                <strong>{doc.title}</strong>
-                <small>
-                  {doc.id === demo.id ? "W1 案例集 · 官方文书" : "本地文献"} ·{" "}
-                  {doc.highlights.length} 条批注
-                </small>
-              </span>
-            </button>
+            <div className={`document-row ${active.id === doc.id ? "selected" : ""}`} key={doc.id}>
+              <button type="button" className="document-item" onClick={() => { setActiveId(doc.id); setSearch(""); setFilter("全部"); }}>
+                <span className="document-icon">▤</span><span><strong>{doc.title}</strong><small>{isBuiltIn(doc.id) ? "课程内置材料" : "本地导入文献"} · {doc.highlights.length} 条批注</small></span>
+              </button>
+              {!isBuiltIn(doc.id) && <button type="button" className="document-delete" onClick={async () => { if (!window.confirm(`删除“${doc.title}”？批注也会删除。`)) return; await removeDocument(doc.id); const next = documentsRef.current.filter((d) => d.id !== doc.id); documentsRef.current = next; setDocuments(next); if (activeId === doc.id) setActiveId(next[0]?.id || demo.id); setStatus("已删除本地文献"); }}>删除</button>}
+            </div>
           ))}
         </nav>
         <div className="library-bottom">

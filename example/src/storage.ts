@@ -23,6 +23,12 @@ export const demo: ReadingDocument = {
   question: "法院如何分析独立机构的结构与总统免职权？",
   highlights: [],
 };
+export const builtInDemos: ReadingDocument[] = [
+  demo,
+  { id: "w1-trump-wilcox", title: "Trump v. Wilcox", source: "https://www.supremecourt.gov/opinions/24pdf/24a966_1b8e.pdf", question: "总统能否撤换独立机构成员？法院如何处理紧急申请与行政权边界？", highlights: [] },
+  { id: "w1-learning-resources-trump", title: "Learning Resources, Inc. v. Trump / Trump v. V.O.S. Selections, Inc.", source: "https://www.supremecourt.gov/opinions/25pdf/24-1287_new_3135.pdf", question: "IEEPA 是否授权总统征收关税？法院如何区分紧急经济权力与税收权？", highlights: [] },
+];
+export function isBuiltIn(id: string) { return builtInDemos.some((d) => d.id === id); }
 let database: Promise<IDBDatabase> | undefined;
 function db() {
   if (!database)
@@ -111,4 +117,16 @@ export function downloadFile(name: string, body: string, type: string) {
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export async function removeDocument(id: string): Promise<void> {
+  if (isBuiltIn(id)) return;
+  const database = await db();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction("documents", "readwrite");
+    transaction.objectStore("documents").delete(id);
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(transaction.error);
+  });
 }
