@@ -1,43 +1,52 @@
-☕️ [Buy me a coffee](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SC4D2NS8G2JJ8&source=url)
+# IPO 研读室 · 计算法学方法 W2
 
-![Node CI](https://github.com/agentcooper/react-pdf-highlighter/workflows/Node%20CI/badge.svg)
+面向陌生领域的个人文献研读器：原文阅读 → 建立概念地图 → 证据与疑问批注 → 闭卷复述 → 导出笔记。
 
-# react-pdf-highlighter
+## 本地查看
 
-Set of React components for PDF annotation.
+提交包已经包含 `example/dist/`，查看时不用下载 npm 依赖。
 
-Features:
+- macOS：双击 `启动阅读器.command`，然后在浏览器打开 http://127.0.0.1:8765 。需要本机已有 Node.js 或 Python 3。
+- 跨平台：在项目目录运行 `node scripts/serve.mjs`，打开上面的地址。Node.js 推荐 22.12 或更高版本。
+- Python 备选：`python3 -m http.server 8765 --bind 127.0.0.1 --directory example/dist`。
+- 不直接双击 HTML；PDF worker 需要 HTTP 环境。关闭终端即可停止服务。
 
-- Built on top of PDF.js
-- Text and image highlights
-- Popover text for highlights
-- Scroll to highlights
+## 开发
 
-## Importing CSS
-
-The bundled CSS include the CSS for pdfjs.
-
-```tsx
-import "react-pdf-highlighter/dist/style.css";
-```
-
-## Example
-
-See demo https://agentcooper.github.io/react-pdf-highlighter/.
-
-To run the example app locally:
-
-```bash
-npm install
+```sh
+npm ci
 npm start
 ```
 
-## Install
+开发地址由终端显示（默认 http://localhost:3003）。构建：`npm run build`。运行构建产物：`npm run preview`。
 
-```bash
-npm install react-pdf-highlighter
-```
+浏览器数据按协议、主机和端口分开保存；开发地址与提交包地址的数据不会自动互通。建议固定使用 `http://127.0.0.1:8765` 研读并定期导出。
 
-## How to use
+## 使用流程
 
-See [`./example/src/App.tsx`](https://github.com/agentcooper/react-pdf-highlighter/blob/main/example/src/App.tsx) for the React component API example.
+1. 默认打开 W1 的 Seila Law 官方文书演示快照；也可以导入 50 MB 以内的本地 PDF。
+2. 在“导读与自测”填写研读问题。默认文书有背景、概念提示和三段原文跳转；其他文件使用通用三遍阅读框架。
+3. 选中文字后点击“添加研读批注”，选择证据／疑问／反证／观点，写自己的评论。按 Option / Alt 拖动可框选图片区域。
+4. 在“摘录与批注”搜索、筛选、修改批注，点击页码返回原文。
+5. 在“导读与自测”用自己的话解释概念、做闭卷复述、记录待核问题。
+6. 导出 Markdown 或 JSON：先预览，再点击保存文件；浏览器不支持下载时，可从预览框复制文本。
+7. “生成 AI 学习任务单”提取前 12 页、最多 45000 字符，附页序与学习问题。可自行交给选择的 AI；本程序没有接入模型，也不会自动上传。
+
+## 保存与边界
+
+- PDF 文件和研读内容存入此浏览器的 IndexedDB；刷新可恢复。导入同一个文件通过 SHA-256 去重。
+- 清理网站数据、无痕窗口结束或存储空间不足可能导致数据丢失；请导出留存。JSON 导出不包含 PDF，也不是一键可恢复的备份，本版未提供 JSON 导入。
+- 页码采用 PDF 页序，与文书印刷页码可能不同。
+- 导读是 AI 辅助制作的学习材料，待读者核验；原文及 W1 中文初稿不代表现行法律结论。
+- 没有 OCR；扫描件可阅读和区域批注，但通常不能选取文字或生成有效学习任务单。
+- 本版不自动给理解打分，不把完成笔记等同于真正掌握。
+
+## 二次创作与来源
+
+从 https://github.com/agentcooper/react-pdf-highlighter 直接 `git clone`，基线提交 `ae0968f`，开发分支 `week2-reader`。尚未 Fork、Push 或发布。
+
+保留上游 PDF.js 阅读、文字／区域高亮与定位能力；新增中文三栏研读界面、文献导入与持久化、分类／搜索／编辑、学习脚手架、原文定位导读、闭卷复述、Markdown／JSON 导出和 AI 学习任务单。更新旧依赖并将 PDF worker 本地打包。
+
+上游说明见 [README.upstream.md](README.upstream.md)，MIT 许可见 [LICENSE](LICENSE)。演示文书来源及哈希见 [source.json](example/public/demo/source.json)。
+
+人负责主题、需求和最终判断；Codex 辅助查找项目、迁移目录、实现与验证。不将功能测试文字写成用户自己的研读成果。

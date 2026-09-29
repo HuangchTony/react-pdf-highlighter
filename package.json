@@ -30,14 +30,15 @@
     "format": "biome format --write",
     "lint": "biome check",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "preview": "node scripts/serve.mjs"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
-    "pdfjs-dist": "4.4.168",
+    "pdfjs-dist": "^4.10.38",
     "react-rnd": "^10.4.11",
     "ts-debounce": "^4.0.0"
   },
@@ -54,12 +55,15 @@
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "playwright": "^1.45.1",
     "postcss-import": "^16.1.0",
     "typescript": "^5.6.2",
-    "vite": "^5.3.3",
+    "vite": "^7.3.6",
     "vite-plugin-dts": "^4.1.1"
   },
-  "homepage": "https://github.com/agentcooper/react-pdf-highlighter#readme"
+  "homepage": "https://github.com/agentcooper/react-pdf-highlighter#readme",
+  "engines": {
+    "node": ">=22.12.0"
+  }
 }

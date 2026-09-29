@@ -8,6 +8,7 @@ export default defineConfig({
     minify: false,
     lib: {
       entry: "./src/index.ts",
+      cssFileName: "style",
       formats: ["es"],
       fileName: (format, entryName) => `${entryName}.js`,
     },
